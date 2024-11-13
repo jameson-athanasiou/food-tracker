@@ -1,16 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client'
+import { FoodTable } from './components/FoodTable'
 import { DateSelection } from './components/DateSelection'
-import 'rsuite/dist/rsuite.min.css';
+import 'rsuite/dist/rsuite.min.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const client = new ApolloClient({
+    uri: 'http://localhost:5173/graphql',
+    cache: new InMemoryCache(),
+  })
 
   return (
     <>
-    <DateSelection />
-     
+      <ApolloProvider client={client}>
+        <DateSelection />
+        <FoodTable />
+      </ApolloProvider>
     </>
   )
 }

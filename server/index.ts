@@ -1,35 +1,89 @@
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import express from 'express'
-import { createServer as createViteServer } from 'vite'
+import { ApolloServer } from '@apollo/server'
+import { startStandaloneServer } from '@apollo/server/standalone'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const typeDefs = `#graphql
+  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
 
-async function createServer() {
-  const app = express()
+  # This "Book" type defines the queryable fields for every book in our data source.
+  type Book {
+    title: String
+    author: String
+  }
 
-//   // Create Vite server in middleware mode and configure the app type as
-//   // 'custom', disabling Vite's own HTML serving logic so parent server
-//   // can take control
-//   const vite = await createViteServer({
-//     server: { middlewareMode: true },
-//     appType: 'custom'
-//   })
+  input AddFoodEntryInput {
+    food: String!
+    servings: Float!
+  }
 
-//   // Use vite's connect instance as middleware. If you use your own
-//   // express router (express.Router()), you should use router.use
-//   // When the server restarts (for example after the user modifies
-//   // vite.config.js), `vite.middlewares` is still going to be the same
-//   // reference (with a new internal stack of Vite and plugin-injected
-//   // middlewares). The following is valid even after restarts.
-//   app.use(vite.middlewares)
+  input FoodEntriesByDateInput {
+    date: String!
+  }
 
-  app.use('*', async (req: express.Request, res: express.Response) => {
-    // serve index.html - we will tackle this next
-  })
+  type FoodEntry {
+    food: String
+    servings: Float
+  }
 
-  app.listen(3000)
+  type AddFoodEntryResponse {
+    entry: FoodEntry
+  }
+
+  # The "Query" type is special: it lists all of the available queries that
+  # clients can execute, along with the return type for each. In this
+  # case, the "books" query returns an array of zero or more Books (defined above).
+  type Query {
+    books: [Book]
+    foodEntriesByDate(input: FoodEntriesByDateInput!): [FoodEntry]
+  }
+
+  type Mutation {
+    addFoodEntry(input: AddFoodEntryInput): AddFoodEntryResponse
+  }
+`
+
+const books = [
+  {
+    title: 'The Awakening',
+    author: 'Kate Chopin',
+  },
+  {
+    title: 'City of Glass',
+    author: 'Paul Auster',
+  },
+]
+
+const foodEntries = [
+  {
+    date: '11/12/2024',
+    food: 'pizza',
+    servings: 2,
+  },
+]
+
+const resolvers = {
+  Query: {
+    books: () => books,
+    foodEntriesByDate: (_, { input }) => {
+      console.log(input)
+
+      return foodEntries.filter(({ date }) => date === input.date)
+    },
+  },
+  Mutation: {
+    addFoodEntry: (_, { input }) => {
+      console.log(input)
+      return { entry: input }
+    },
+  },
 }
 
-createServer()
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+})
+
+const { url } = await startStandaloneServer(server, {
+  listen: { port: 4000 },
+})
+
+console.log(`🚀  Server ready at: ${url}`)
