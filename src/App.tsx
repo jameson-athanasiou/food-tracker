@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client
 import { FoodTable } from './components/FoodTable'
 import { DateSelection } from './components/DateSelection'
 import 'rsuite/dist/rsuite.min.css'
+import { AddNewFoodModal } from './components/AddNewFoodModal'
 
 const App = () => {
   const client = new ApolloClient({
@@ -13,6 +14,7 @@ const App = () => {
     <>
       <ApolloProvider client={client}>
         <DateSelection />
+        <AddNewFoodModal />
         <FoodTable />
       </ApolloProvider>
     </>

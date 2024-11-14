@@ -75,6 +75,8 @@ export const FoodTable = () => {
             date: '11/13/2024',
             food: entryToSave.food,
             servings: Number(entryToSave.servings),
+            ...(entryToSave.calcium && { calcium: Number(entryToSave.calcium) }),
+            ...(entryToSave.protein && { protein: Number(entryToSave.protein) }),
           },
         },
       })
@@ -105,6 +107,14 @@ export const FoodTable = () => {
         <Column flexGrow={1}>
           <HeaderCell>Servings</HeaderCell>
           <EditableTextCell dataKey="servings" handleChange={handleChange} onEdit={handleEdit} />
+        </Column>
+        <Column flexGrow={1}>
+          <HeaderCell>Calcium</HeaderCell>
+          <EditableTextCell dataKey="calcium" handleChange={handleChange} onEdit={handleEdit} />
+        </Column>
+        <Column flexGrow={1}>
+          <HeaderCell>Protein</HeaderCell>
+          <EditableTextCell dataKey="protein" handleChange={handleChange} onEdit={handleEdit} />
         </Column>
         <Column width={100}>
           <HeaderCell>Action</HeaderCell>

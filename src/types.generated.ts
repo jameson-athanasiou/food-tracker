@@ -15,9 +15,11 @@ export type Scalars = {
 };
 
 export type AddOrUpdateFoodEntryInput = {
+  calcium?: InputMaybe<Scalars['Float']['input']>;
   date: Scalars['String']['input'];
   food: Scalars['String']['input'];
   id: Scalars['String']['input'];
+  protein?: InputMaybe<Scalars['Float']['input']>;
   servings: Scalars['Float']['input'];
 };
 
@@ -32,8 +34,10 @@ export type FoodEntriesByDateInput = {
 
 export type FoodEntry = {
   __typename?: 'FoodEntry';
+  calcium?: Maybe<Scalars['Float']['output']>;
   food: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  protein?: Maybe<Scalars['Float']['output']>;
   servings: Scalars['Float']['output'];
 };
 

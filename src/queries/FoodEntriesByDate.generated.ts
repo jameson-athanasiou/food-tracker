@@ -8,7 +8,7 @@ export type FoodEntriesByDateQueryVariables = Types.Exact<{
 }>;
 
 
-export type FoodEntriesByDateQuery = { __typename?: 'Query', foodEntriesByDate: Array<{ __typename?: 'FoodEntry', id: string, food: string, servings: number }> };
+export type FoodEntriesByDateQuery = { __typename?: 'Query', foodEntriesByDate: Array<{ __typename?: 'FoodEntry', id: string, food: string, servings: number, calcium?: number | null, protein?: number | null }> };
 
 
 export const FoodEntriesByDateDocument = gql`
@@ -17,6 +17,8 @@ export const FoodEntriesByDateDocument = gql`
     id
     food
     servings
+    calcium
+    protein
   }
 }
     `;

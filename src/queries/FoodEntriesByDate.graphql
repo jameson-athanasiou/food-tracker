@@ -3,5 +3,7 @@ query FoodEntriesByDate($input: FoodEntriesByDateInput!) {
     id
     food
     servings
+    calcium
+    protein
   }
 }
