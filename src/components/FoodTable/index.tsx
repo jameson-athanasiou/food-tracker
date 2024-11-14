@@ -1,14 +1,10 @@
-import { Table, Button, IconButton, Input, DatePicker, InputNumber, CellProps } from 'rsuite'
-import { VscEdit, VscSave, VscRemove } from 'react-icons/vsc'
-import { useState } from 'react'
-import { RowDataType } from 'rsuite/esm/Table'
-import { useQuery, gql } from '@apollo/client'
-import { unique } from 'radash'
+import { Table, Button } from 'rsuite'
+import { useEffect, useState } from 'react'
 import { v4 as uuidV4 } from 'uuid'
-import { mockUsers } from '../../../mock'
 import { EditableTextCell } from './EditableTextCell'
 import { ActionCell } from './ActionCell'
-import { useFoodEntriesByDateQuery } from '../../queries/FoodEntriesByDate.generated'
+import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../../queries/FoodEntriesByDate.generated'
+import { useAddOrUpdateFoodEntryMutation } from '../../mutations/AddOrUpdateFoodEntry.generated'
 import { FoodEntry } from '../../types.generated'
 
 const { Column, HeaderCell, Cell } = Table
@@ -22,18 +18,41 @@ const styles = `
 }
 `
 
-const mockFoodEntries: { id: string; food: string; servings: number; status?: string | null }[] = [
-  { id: '1', food: 'peanut butter crackers', servings: 1 },
-  { id: '2', food: 'pizza', servings: 0.5 },
-  { id: '3', food: 'goldfish', servings: 2 },
-]
-
 export const FoodTable = () => {
-  const [newEntries, setNewEntries] = useState<FoodEntry[]>([])
-  const { data: foodEntriesData, loading } = useFoodEntriesByDateQuery({ variables: { input: { date: '11/13/2024' } } })
+  const { data: foodEntriesData, loading: foodEntriesLoading } = useFoodEntriesByDateQuery({
+    variables: { input: { date: '11/13/2024' } },
+  })
+  const [addOrUpdateFoodEntry, { loading: addOrUpdateFoodEntryLoading }] = useAddOrUpdateFoodEntryMutation({
+    awaitRefetchQueries: true,
+    refetchQueries: [{ query: FoodEntriesByDateDocument, variables: { input: { date: '11/13/2024' } } }],
+  })
+
+  const [allEntries, setAllEntries] = useState<FoodEntry[]>([])
+
+  useEffect(() => {
+    setAllEntries(foodEntriesData?.foodEntriesByDate || [])
+  }, [foodEntriesData])
+
+  const addRowToEditState = (id: string) => {
+    setAllEntries((previousData) => {
+      return previousData.map((entry) => {
+        if (entry.id !== id) return entry
+        return { ...entry, status: 'EDIT' }
+      })
+    })
+  }
+
+  const removeRowFromEditState = (id: string) => {
+    setAllEntries((previousData) => {
+      return previousData.map((entry) => {
+        if (entry.id !== id) return entry
+        return { ...entry, status: null }
+      })
+    })
+  }
 
   const handleChange = (id: string, key: string, value: string | number) => {
-    setData((previousData) => {
+    setAllEntries((previousData) => {
       return previousData.map((entry) => {
         if (entry.id !== id) return entry
         return { ...entry, [key]: value }
@@ -42,15 +61,25 @@ export const FoodTable = () => {
   }
 
   const handleEdit = (id: string) => {
-    setData((previousData) => {
-      return previousData.map((entry) => {
-        if (entry.id !== id) return entry
-        return { ...entry, status: entry.status ? null : 'EDIT' }
-      })
-    })
+    addRowToEditState(id)
   }
 
-  const displayData = unique([...newEntries, ...(foodEntriesData?.foodEntriesByDate || [])], ({ id }) => id)
+  const handleSave = async (id: string) => {
+    const entryToSave = allEntries.find((entry) => entry.id === id)
+    if (entryToSave && entryToSave.food) {
+      removeRowFromEditState(id)
+      await addOrUpdateFoodEntry({
+        variables: {
+          input: {
+            id: entryToSave.id,
+            date: '11/13/2024',
+            food: entryToSave.food,
+            servings: Number(entryToSave.servings),
+          },
+        },
+      })
+    }
+  }
 
   return (
     <>
@@ -58,13 +87,17 @@ export const FoodTable = () => {
 
       <Button
         onClick={() => {
-          setNewEntries((previousNewEntries) => [{ id: uuidV4(), food: '', servings: 1 }, ...previousNewEntries])
+          const newEntryId = uuidV4()
+          setAllEntries((previousNewEntries) => [
+            { id: newEntryId, food: '', servings: 1, status: 'EDIT' },
+            ...previousNewEntries,
+          ])
         }}
       >
         Add record
       </Button>
       <hr />
-      <Table height={420} data={displayData} loading={loading}>
+      <Table height={420} data={allEntries} loading={foodEntriesLoading}>
         <Column flexGrow={1}>
           <HeaderCell>Food</HeaderCell>
           <EditableTextCell dataKey="food" handleChange={handleChange} onEdit={handleEdit} />
@@ -75,7 +108,7 @@ export const FoodTable = () => {
         </Column>
         <Column width={100}>
           <HeaderCell>Action</HeaderCell>
-          <ActionCell dataKey="id" onEdit={handleEdit} />
+          <ActionCell dataKey="id" onEdit={handleEdit} onSave={handleSave} />
         </Column>
       </Table>
     </>

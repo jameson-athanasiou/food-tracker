@@ -1,10 +1,12 @@
+/* eslint-disable max-classes-per-file */
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
 import { v4 as uuidV4 } from 'uuid'
 
 const typeDefs = `#graphql
 
-  input AddFoodEntryInput {
+  input AddOrUpdateFoodEntryInput {
+    id: String!
     date: String!
     food: String!
     servings: Float!
@@ -20,7 +22,7 @@ const typeDefs = `#graphql
     servings: Float!
   }
 
-  type AddFoodEntryResponse {
+  type AddOrUpdateFoodEntryResponse {
     entries: [FoodEntry!]!
   }
 
@@ -32,44 +34,68 @@ const typeDefs = `#graphql
   }
 
   type Mutation {
-    addFoodEntry(input: AddFoodEntryInput!): AddFoodEntryResponse!
+    addOrUpdateFoodEntry(input: AddOrUpdateFoodEntryInput!): AddOrUpdateFoodEntryResponse!
   }
 `
 
-const foodEntries = [
-  {
-    id: '78e3c73c-fabb-47fd-ace4-5f374dc9bdaf',
-    date: '11/13/2024',
-    food: 'pizza',
-    servings: 2,
-  },
-  {
-    id: 'bc89c02b-631e-4899-ab59-a8d9c791b032',
-    date: '11/13/2024',
-    food: 'crackers',
-    servings: 1,
-  },
-]
+class FoodEntries {
+  entries = [
+    {
+      id: '78e3c73c-fabb-47fd-ace4-5f374dc9bdaf',
+      date: '11/13/2024',
+      food: 'pizza',
+      servings: 2,
+    },
+    {
+      id: 'bc89c02b-631e-4899-ab59-a8d9c791b032',
+      date: '11/13/2024',
+      food: 'crackers',
+      servings: 1,
+    },
+  ]
+
+  public getEntries() {
+    return this.entries
+  }
+
+  public setEntries(data: { id: string; date: string; food: string; servings: number }) {
+    const { id, date, food, servings } = data
+
+    const existingEntriesContainsItem = this.entries.find((entry) => entry.id === id)
+
+    if (!existingEntriesContainsItem)
+      this.entries.unshift({
+        id: id || uuidV4(),
+        date,
+        food,
+        servings,
+      })
+    else {
+      this.entries = this.entries.map((entry) => {
+        if (entry.id === id) return { id, date, food, servings }
+        return entry
+      })
+    }
+  }
+}
+
+const CurrentFoodEntries = new FoodEntries()
 
 const resolvers = {
   Query: {
     foodEntriesByDate: (_, { input }) => {
       console.log(input)
 
-      return foodEntries.filter(({ date }) => date === input.date)
+      return CurrentFoodEntries.getEntries().filter(({ date }) => date === input.date)
     },
   },
   Mutation: {
-    addFoodEntry: (_, { input }) => {
-      const { date, food, servings } = input
+    addOrUpdateFoodEntry: (_, { input }) => {
       console.log(input)
-      foodEntries.push({
-        id: uuidV4(),
-        date,
-        food,
-        servings,
-      })
-      return { entries: foodEntries }
+
+      CurrentFoodEntries.setEntries(input)
+
+      return { entries: CurrentFoodEntries.getEntries() }
     },
   },
 }

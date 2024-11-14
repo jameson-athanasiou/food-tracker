@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:server": "tsx --watch ./server/index.ts",
+    "dev:server:debug": "tsx --inspect --watch ./server/index.ts",
     "build": "tsc -b && vite build",
     "generate": "graphql-codegen",
     "lint": "eslint .",

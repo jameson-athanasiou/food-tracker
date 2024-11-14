@@ -14,14 +14,15 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type AddFoodEntryInput = {
+export type AddOrUpdateFoodEntryInput = {
   date: Scalars['String']['input'];
   food: Scalars['String']['input'];
+  id: Scalars['String']['input'];
   servings: Scalars['Float']['input'];
 };
 
-export type AddFoodEntryResponse = {
-  __typename?: 'AddFoodEntryResponse';
+export type AddOrUpdateFoodEntryResponse = {
+  __typename?: 'AddOrUpdateFoodEntryResponse';
   entries: Array<FoodEntry>;
 };
 
@@ -38,12 +39,12 @@ export type FoodEntry = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addFoodEntry: AddFoodEntryResponse;
+  addOrUpdateFoodEntry: AddOrUpdateFoodEntryResponse;
 };
 
 
-export type MutationAddFoodEntryArgs = {
-  input: AddFoodEntryInput;
+export type MutationAddOrUpdateFoodEntryArgs = {
+  input: AddOrUpdateFoodEntryInput;
 };
 
 export type Query = {

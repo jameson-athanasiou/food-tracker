@@ -15,15 +15,17 @@ export const ActionCell = ({
   rowData,
   dataKey,
   onEdit,
+  onSave,
   ...props
-}: CellProps<RowData> & { onEdit: (id: string) => void }) => {
+}: CellProps<RowData> & { onEdit: (id: string) => void; onSave: (id: string) => void }) => {
   return (
     <Cell {...props} style={{ padding: '6px', display: 'flex', gap: '4px' }}>
       <IconButton
         appearance="subtle"
         icon={rowData?.status === 'EDIT' ? <VscSave /> : <VscEdit />}
         onClick={() => {
-          onEdit(rowData?.id as string)
+          if (rowData?.status !== 'EDIT') onEdit(rowData?.id as string)
+          else onSave(rowData?.id as string)
         }}
       />
       <IconButton

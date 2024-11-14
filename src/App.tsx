@@ -3,7 +3,7 @@ import { FoodTable } from './components/FoodTable'
 import { DateSelection } from './components/DateSelection'
 import 'rsuite/dist/rsuite.min.css'
 
-function App() {
+const App = () => {
   const client = new ApolloClient({
     uri: 'http://localhost:5173/graphql',
     cache: new InMemoryCache(),
