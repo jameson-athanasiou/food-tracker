@@ -4,7 +4,7 @@ module.exports = {
   },
   extends: ['airbnb-base', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
-  ignorePatterns: ['build', 'node_modules', 'types.generated.ts'],
+  ignorePatterns: ['build', 'node_modules', '*.generated.ts'],
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     camelcase: 0,

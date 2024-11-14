@@ -3,18 +3,13 @@ import { VscEdit, VscSave, VscRemove } from 'react-icons/vsc'
 import { useState } from 'react'
 import { RowDataType } from 'rsuite/esm/Table'
 import { useQuery, gql } from '@apollo/client'
+import { unique } from 'radash'
+import { v4 as uuidV4 } from 'uuid'
 import { mockUsers } from '../../../mock'
 import { EditableTextCell } from './EditableTextCell'
 import { ActionCell } from './ActionCell'
-
-const GET_BOOKS = gql`
-  query GetBooks {
-    books {
-      title
-      author
-    }
-  }
-`
+import { useFoodEntriesByDateQuery } from '../../queries/FoodEntriesByDate.generated'
+import { FoodEntry } from '../../types.generated'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -34,10 +29,8 @@ const mockFoodEntries: { id: string; food: string; servings: number; status?: st
 ]
 
 export const FoodTable = () => {
-  const [data, setData] = useState(mockFoodEntries)
-  const { loading, error, data: booksData } = useQuery(GET_BOOKS)
-
-  console.log(booksData)
+  const [newEntries, setNewEntries] = useState<FoodEntry[]>([])
+  const { data: foodEntriesData, loading } = useFoodEntriesByDateQuery({ variables: { input: { date: '11/13/2024' } } })
 
   const handleChange = (id: string, key: string, value: string | number) => {
     setData((previousData) => {
@@ -57,19 +50,21 @@ export const FoodTable = () => {
     })
   }
 
+  const displayData = unique([...newEntries, ...(foodEntriesData?.foodEntriesByDate || [])], ({ id }) => id)
+
   return (
     <>
       <style>{styles}</style>
 
       <Button
         onClick={() => {
-          setData([{ id: (data.length + 1).toString(), food: '', servings: 1 }, ...data])
+          setNewEntries((previousNewEntries) => [{ id: uuidV4(), food: '', servings: 1 }, ...previousNewEntries])
         }}
       >
         Add record
       </Button>
       <hr />
-      <Table height={420} data={data}>
+      <Table height={420} data={displayData} loading={loading}>
         <Column flexGrow={1}>
           <HeaderCell>Food</HeaderCell>
           <EditableTextCell dataKey="food" handleChange={handleChange} onEdit={handleEdit} />

@@ -1,0 +1,7 @@
+query FoodEntriesByDate($input: FoodEntriesByDateInput!) {
+  foodEntriesByDate(input: $input) {
+    id
+    food
+    servings
+  }
+}

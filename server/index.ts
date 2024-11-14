@@ -1,16 +1,11 @@
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
+import { v4 as uuidV4 } from 'uuid'
 
 const typeDefs = `#graphql
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
-  }
 
   input AddFoodEntryInput {
+    date: String!
     food: String!
     servings: Float!
   }
@@ -20,49 +15,44 @@ const typeDefs = `#graphql
   }
 
   type FoodEntry {
-    food: String
-    servings: Float
+    id: ID!
+    food: String!
+    servings: Float!
   }
 
   type AddFoodEntryResponse {
-    entry: FoodEntry
+    entries: [FoodEntry!]!
   }
 
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books: [Book]
-    foodEntriesByDate(input: FoodEntriesByDateInput!): [FoodEntry]
+    foodEntriesByDate(input: FoodEntriesByDateInput!): [FoodEntry!]!
   }
 
   type Mutation {
-    addFoodEntry(input: AddFoodEntryInput): AddFoodEntryResponse
+    addFoodEntry(input: AddFoodEntryInput!): AddFoodEntryResponse!
   }
 `
 
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-]
-
 const foodEntries = [
   {
-    date: '11/12/2024',
+    id: '78e3c73c-fabb-47fd-ace4-5f374dc9bdaf',
+    date: '11/13/2024',
     food: 'pizza',
     servings: 2,
+  },
+  {
+    id: 'bc89c02b-631e-4899-ab59-a8d9c791b032',
+    date: '11/13/2024',
+    food: 'crackers',
+    servings: 1,
   },
 ]
 
 const resolvers = {
   Query: {
-    books: () => books,
     foodEntriesByDate: (_, { input }) => {
       console.log(input)
 
@@ -71,8 +61,15 @@ const resolvers = {
   },
   Mutation: {
     addFoodEntry: (_, { input }) => {
+      const { date, food, servings } = input
       console.log(input)
-      return { entry: input }
+      foodEntries.push({
+        id: uuidV4(),
+        date,
+        food,
+        servings,
+      })
+      return { entries: foodEntries }
     },
   },
 }

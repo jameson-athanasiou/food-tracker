@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev:server": "tsx --watch ./server/index.ts",
     "build": "tsc -b && vite build",
+    "generate": "graphql-codegen",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview"
@@ -17,13 +18,19 @@
     "@faker-js/faker": "^9.2.0",
     "express": "^4.21.1",
     "graphql": "^16.9.0",
+    "radash": "^12.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
-    "rsuite": "^5.74.2"
+    "rsuite": "^5.74.2",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/near-operation-file-preset": "^3.0.0",
+    "@graphql-codegen/typescript-operations": "^4.3.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.2",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
