@@ -2,7 +2,12 @@ module.exports = {
   env: {
     es2021: true,
   },
-  extends: ['airbnb-base', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
+  extends: [
+    'airbnb-base',
+    'plugin:react-hooks/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+  ],
   parser: '@typescript-eslint/parser',
   ignorePatterns: ['build', 'node_modules', '*.generated.ts'],
   plugins: ['@typescript-eslint', 'prettier'],

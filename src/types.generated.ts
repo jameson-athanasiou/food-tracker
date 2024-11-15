@@ -53,6 +53,7 @@ export type MutationAddOrUpdateFoodEntryArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  existingFoodItems: Array<Scalars['String']['output']>;
   foodEntriesByDate: Array<FoodEntry>;
 };
 

@@ -34,6 +34,7 @@ const typeDefs = `#graphql
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
+    existingFoodItems: [String!]!
     foodEntriesByDate(input: FoodEntriesByDateInput!): [FoodEntry!]!
   }
 
@@ -46,6 +47,9 @@ const CurrentFoodEntries = new FoodEntries()
 
 const resolvers = {
   Query: {
+    existingFoodItems: () => {
+      return CurrentFoodEntries.getExistingFoodItems()
+    },
     foodEntriesByDate: (_, { input }) => {
       console.log(input)
 

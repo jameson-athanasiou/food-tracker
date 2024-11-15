@@ -1,6 +1,5 @@
-import { Table, Button } from 'rsuite'
+import { Table } from 'rsuite'
 import { useEffect, useState } from 'react'
-import { v4 as uuidV4 } from 'uuid'
 import { EditableTextCell } from './EditableTextCell'
 import { ActionCell } from './ActionCell'
 import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../../queries/FoodEntriesByDate.generated'
@@ -22,7 +21,7 @@ export const FoodTable = () => {
   const { data: foodEntriesData, loading: foodEntriesLoading } = useFoodEntriesByDateQuery({
     variables: { input: { date: '11/13/2024' } },
   })
-  const [addOrUpdateFoodEntry, { loading: addOrUpdateFoodEntryLoading }] = useAddOrUpdateFoodEntryMutation({
+  const [addOrUpdateFoodEntry] = useAddOrUpdateFoodEntryMutation({
     awaitRefetchQueries: true,
     refetchQueries: [{ query: FoodEntriesByDateDocument, variables: { input: { date: '11/13/2024' } } }],
   })
@@ -75,8 +74,6 @@ export const FoodTable = () => {
             date: '11/13/2024',
             food: entryToSave.food,
             servings: Number(entryToSave.servings),
-            ...(entryToSave.calcium && { calcium: Number(entryToSave.calcium) }),
-            ...(entryToSave.protein && { protein: Number(entryToSave.protein) }),
           },
         },
       })
@@ -86,18 +83,6 @@ export const FoodTable = () => {
   return (
     <>
       <style>{styles}</style>
-
-      <Button
-        onClick={() => {
-          const newEntryId = uuidV4()
-          setAllEntries((previousNewEntries) => [
-            { id: newEntryId, food: '', servings: 1, status: 'EDIT' },
-            ...previousNewEntries,
-          ])
-        }}
-      >
-        Add record
-      </Button>
       <hr />
       <Table height={420} data={allEntries} loading={foodEntriesLoading}>
         <Column flexGrow={1}>
@@ -110,11 +95,11 @@ export const FoodTable = () => {
         </Column>
         <Column flexGrow={1}>
           <HeaderCell>Calcium</HeaderCell>
-          <EditableTextCell dataKey="calcium" handleChange={handleChange} onEdit={handleEdit} />
+          <Cell dataKey="calcium" />
         </Column>
         <Column flexGrow={1}>
           <HeaderCell>Protein</HeaderCell>
-          <EditableTextCell dataKey="protein" handleChange={handleChange} onEdit={handleEdit} />
+          <Cell dataKey="protein" />
         </Column>
         <Column width={100}>
           <HeaderCell>Action</HeaderCell>
