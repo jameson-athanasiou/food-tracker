@@ -1,21 +1,28 @@
 import { useCallback, useState } from 'react'
-import { Button, ButtonToolbar, Input, InputPicker, Modal } from 'rsuite'
+import { Button, ButtonToolbar, Input, InputPicker, Modal, AutoComplete } from 'rsuite'
 import { v4 as uuidV4 } from 'uuid'
 import { useAddOrUpdateFoodEntryMutation } from '../mutations/AddOrUpdateFoodEntry.generated'
 import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../queries/FoodEntriesByDate.generated'
-import { useExistingFoodItemsQuery } from '../queries/ExistingFoodItems.generated'
+import { useExistingFoodItemsQuery, ExistingFoodItemsDocument } from '../queries/ExistingFoodItems.generated'
 import { FoodEntry } from '../types.generated'
+
+type AddNewFoodModalProps = {
+  selectedDate: string
+}
 
 const styles = {
   marginBottom: 10,
 }
 
-export const AddNewFoodModal = () => {
+export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
   const [open, setOpen] = useState(false)
   const [showNutritionFacts, setShowNutritionFacts] = useState(false)
   const [addFoodEntry, { loading }] = useAddOrUpdateFoodEntryMutation({
     awaitRefetchQueries: true,
-    refetchQueries: [{ query: FoodEntriesByDateDocument, variables: { input: { date: '11/13/2024' } } }],
+    refetchQueries: [
+      { query: FoodEntriesByDateDocument, variables: { input: { date: selectedDate } } },
+      { query: ExistingFoodItemsDocument },
+    ],
   })
   const { data: existingFoodItemsData, loading: existingFoodItemsLoading } = useExistingFoodItemsQuery()
 
@@ -44,7 +51,7 @@ export const AddNewFoodModal = () => {
       variables: {
         input: {
           id: uuidV4(),
-          date: '11/13/2024',
+          date: selectedDate,
           food: foodName as string,
           servings,
           ...(calcium && { calcium }),
@@ -53,7 +60,7 @@ export const AddNewFoodModal = () => {
       },
     })
     handleClose()
-  }, [addFoodEntry, calcium, foodName, handleClose, protein, servings])
+  }, [addFoodEntry, calcium, foodName, handleClose, protein, servings, selectedDate])
 
   const existingFoodItems =
     existingFoodItemsData?.existingFoodItems?.map((item) => ({ label: item, value: item })) || []
@@ -71,9 +78,8 @@ export const AddNewFoodModal = () => {
         </Modal.Header>
 
         <Modal.Body>
-          <InputPicker
+          <AutoComplete
             data={existingFoodItems}
-            loading={existingFoodItemsLoading}
             placeholder="Food name"
             style={styles}
             value={foodName || ''}

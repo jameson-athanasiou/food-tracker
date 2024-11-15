@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
+import { unique } from 'radash'
 import { FoodEntries } from './FoodEntries'
 
 const typeDefs = `#graphql
@@ -48,7 +49,7 @@ const CurrentFoodEntries = new FoodEntries()
 const resolvers = {
   Query: {
     existingFoodItems: () => {
-      return CurrentFoodEntries.getExistingFoodItems()
+      return unique(CurrentFoodEntries.getExistingFoodItems())
     },
     foodEntriesByDate: (_, { input }) => {
       console.log(input)

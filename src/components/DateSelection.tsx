@@ -1,10 +1,19 @@
-import { useState } from 'react';
-import { DatePicker } from 'rsuite';
+import { Dispatch, SetStateAction, useState } from 'react'
+import { DatePicker } from 'rsuite'
 
-export const DateSelection = () => {
-    console.log('ddate');
+type DateSelectionProps = {
+  selectedDate: Date
+  setSelectedDate: Dispatch<SetStateAction<Date>>
+}
 
-    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
-
-    return <DatePicker oneTap value={selectedDate} onChange={(selection) => setSelectedDate(selection)}/>
+export const DateSelection = ({ selectedDate, setSelectedDate }: DateSelectionProps) => {
+  return (
+    <DatePicker
+      cleanable={false}
+      format={'MM/dd/yyyy'}
+      oneTap
+      value={selectedDate}
+      onChange={(selection) => setSelectedDate(selection as Date)}
+    />
+  )
 }

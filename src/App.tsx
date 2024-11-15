@@ -1,8 +1,9 @@
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client'
+import { useState } from 'react'
 import { FoodTable } from './components/FoodTable'
 import { DateSelection } from './components/DateSelection'
-import 'rsuite/dist/rsuite.min.css'
 import { AddNewFoodModal } from './components/AddNewFoodModal'
+import 'rsuite/dist/rsuite.min.css'
 
 const App = () => {
   const client = new ApolloClient({
@@ -10,12 +11,16 @@ const App = () => {
     cache: new InMemoryCache(),
   })
 
+  const [selectedDate, setSelectedDate] = useState(new Date())
+
+  const formattedSelectedDate = selectedDate.toLocaleDateString('en-US')
+
   return (
     <>
       <ApolloProvider client={client}>
-        <DateSelection />
-        <AddNewFoodModal />
-        <FoodTable />
+        <DateSelection selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+        <AddNewFoodModal selectedDate={formattedSelectedDate} />
+        <FoodTable selectedDate={formattedSelectedDate} />
       </ApolloProvider>
     </>
   )

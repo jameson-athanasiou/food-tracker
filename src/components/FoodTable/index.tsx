@@ -6,6 +6,10 @@ import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../../quer
 import { useAddOrUpdateFoodEntryMutation } from '../../mutations/AddOrUpdateFoodEntry.generated'
 import { FoodEntry } from '../../types.generated'
 
+type FoodTableProps = {
+  selectedDate: string
+}
+
 const { Column, HeaderCell, Cell } = Table
 
 const styles = `
@@ -17,13 +21,13 @@ const styles = `
 }
 `
 
-export const FoodTable = () => {
+export const FoodTable = ({ selectedDate }: FoodTableProps) => {
   const { data: foodEntriesData, loading: foodEntriesLoading } = useFoodEntriesByDateQuery({
-    variables: { input: { date: '11/13/2024' } },
+    variables: { input: { date: selectedDate } },
   })
   const [addOrUpdateFoodEntry] = useAddOrUpdateFoodEntryMutation({
     awaitRefetchQueries: true,
-    refetchQueries: [{ query: FoodEntriesByDateDocument, variables: { input: { date: '11/13/2024' } } }],
+    refetchQueries: [{ query: FoodEntriesByDateDocument, variables: { input: { date: selectedDate } } }],
   })
 
   const [allEntries, setAllEntries] = useState<FoodEntry[]>([])
@@ -71,7 +75,7 @@ export const FoodTable = () => {
         variables: {
           input: {
             id: entryToSave.id,
-            date: '11/13/2024',
+            date: selectedDate,
             food: entryToSave.food,
             servings: Number(entryToSave.servings),
           },
