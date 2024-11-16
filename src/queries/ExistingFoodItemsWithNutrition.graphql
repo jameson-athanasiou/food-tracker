@@ -1,0 +1,7 @@
+query ExistingFoodItemsWithNutrition {
+    existingFoodItems {
+        food
+        calcium
+        protein
+    }
+}

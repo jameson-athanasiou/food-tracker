@@ -19,6 +19,12 @@ const typeDefs = `#graphql
     date: String!
   }
 
+  input UpdateFoodNutritionInput {
+    food: String!
+    calcium: Float
+    protein: Float
+  }
+
   type FoodEntry {
     id: ID!
     food: String!
@@ -27,20 +33,24 @@ const typeDefs = `#graphql
     protein: Float
   }
 
+  type ExistingFood {
+    food: String!
+    calcium: Float
+    protein: Float
+  }
+
   type AddOrUpdateFoodEntryResponse {
     entries: [FoodEntry!]!
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    existingFoodItems: [String!]!
+    existingFoodItems: [ExistingFood!]!
     foodEntriesByDate(input: FoodEntriesByDateInput!): [FoodEntry!]!
   }
 
   type Mutation {
     addOrUpdateFoodEntry(input: AddOrUpdateFoodEntryInput!): AddOrUpdateFoodEntryResponse!
+    updateFoodNutrition(input: UpdateFoodNutritionInput!): ExistingFood!
   }
 `
 
@@ -49,7 +59,7 @@ const CurrentFoodEntries = new FoodEntries()
 const resolvers = {
   Query: {
     existingFoodItems: () => {
-      return unique(CurrentFoodEntries.getExistingFoodItems())
+      return CurrentFoodEntries.getExistingFoodItems()
     },
     foodEntriesByDate: (_, { input }) => {
       console.log(input)
@@ -65,6 +75,11 @@ const resolvers = {
       CurrentFoodEntries.setNutrition(input)
 
       return { entries: CurrentFoodEntries.getEntries() }
+    },
+    updateFoodNutrition: (_, { input }) => {
+      CurrentFoodEntries.setNutrition(input)
+
+      return input
     },
   },
   FoodEntry: {

@@ -1,0 +1,7 @@
+mutation UpdateFoodNutrition($input: UpdateFoodNutritionInput!) {
+  updateFoodNutrition(input: $input) {
+    food
+    calcium
+    protein
+  }
+}

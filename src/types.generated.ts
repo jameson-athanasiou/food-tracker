@@ -28,6 +28,13 @@ export type AddOrUpdateFoodEntryResponse = {
   entries: Array<FoodEntry>;
 };
 
+export type ExistingFood = {
+  __typename?: 'ExistingFood';
+  calcium?: Maybe<Scalars['Float']['output']>;
+  food: Scalars['String']['output'];
+  protein?: Maybe<Scalars['Float']['output']>;
+};
+
 export type FoodEntriesByDateInput = {
   date: Scalars['String']['input'];
 };
@@ -44,6 +51,7 @@ export type FoodEntry = {
 export type Mutation = {
   __typename?: 'Mutation';
   addOrUpdateFoodEntry: AddOrUpdateFoodEntryResponse;
+  updateFoodNutrition: ExistingFood;
 };
 
 
@@ -51,13 +59,24 @@ export type MutationAddOrUpdateFoodEntryArgs = {
   input: AddOrUpdateFoodEntryInput;
 };
 
+
+export type MutationUpdateFoodNutritionArgs = {
+  input: UpdateFoodNutritionInput;
+};
+
 export type Query = {
   __typename?: 'Query';
-  existingFoodItems: Array<Scalars['String']['output']>;
+  existingFoodItems: Array<ExistingFood>;
   foodEntriesByDate: Array<FoodEntry>;
 };
 
 
 export type QueryFoodEntriesByDateArgs = {
   input: FoodEntriesByDateInput;
+};
+
+export type UpdateFoodNutritionInput = {
+  calcium?: InputMaybe<Scalars['Float']['input']>;
+  food: Scalars['String']['input'];
+  protein?: InputMaybe<Scalars['Float']['input']>;
 };

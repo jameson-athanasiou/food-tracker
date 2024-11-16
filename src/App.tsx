@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { FoodTable } from './components/FoodTable'
 import { DateSelection } from './components/DateSelection'
 import { AddNewFoodModal } from './components/AddNewFoodModal'
+import { UpdateExistingFoodModal } from './components/UpdateExistingFoodModal'
 import 'rsuite/dist/rsuite.min.css'
 
 const App = () => {
@@ -20,6 +21,7 @@ const App = () => {
       <ApolloProvider client={client}>
         <DateSelection selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
         <AddNewFoodModal selectedDate={formattedSelectedDate} />
+        <UpdateExistingFoodModal selectedDate={formattedSelectedDate} />
         <FoodTable selectedDate={formattedSelectedDate} />
       </ApolloProvider>
     </>

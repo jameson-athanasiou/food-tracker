@@ -28,7 +28,11 @@ export class FoodEntries {
   }
 
   public getExistingFoodItems() {
-    return Object.keys(this.nutrition)
+    return Object.entries(this.nutrition).map(([foodName, nutritionFacts]) => ({
+      food: foodName,
+      calcium: nutritionFacts.calcium,
+      protein: nutritionFacts.protein,
+    }))
   }
 
   public getNutrition() {
@@ -36,7 +40,6 @@ export class FoodEntries {
   }
 
   public setNutrition(data: { food: string; calcium: number; protein: number }) {
-    // if (Object.keys(this.nutrition).includes(data.food)) return
     this.nutrition = {
       ...this.nutrition,
       [data.food]: {

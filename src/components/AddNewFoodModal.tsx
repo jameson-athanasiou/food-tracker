@@ -3,7 +3,7 @@ import { Button, ButtonToolbar, Input, InputPicker, Modal, AutoComplete } from '
 import { v4 as uuidV4 } from 'uuid'
 import { useAddOrUpdateFoodEntryMutation } from '../mutations/AddOrUpdateFoodEntry.generated'
 import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../queries/FoodEntriesByDate.generated'
-import { useExistingFoodItemsQuery, ExistingFoodItemsDocument } from '../queries/ExistingFoodItems.generated'
+import { useExistingFoodNamesQuery, ExistingFoodNamesDocument } from '../queries/ExistingFoodNames.generated'
 import { FoodEntry } from '../types.generated'
 
 type AddNewFoodModalProps = {
@@ -21,10 +21,10 @@ export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
     awaitRefetchQueries: true,
     refetchQueries: [
       { query: FoodEntriesByDateDocument, variables: { input: { date: selectedDate } } },
-      { query: ExistingFoodItemsDocument },
+      { query: ExistingFoodNamesDocument },
     ],
   })
-  const { data: existingFoodItemsData, loading: existingFoodItemsLoading } = useExistingFoodItemsQuery()
+  const { data: existingFoodNamesData, loading: existingFoodItemsLoading } = useExistingFoodNamesQuery()
 
   const [foodName, setFoodName] = useState<string>()
   const [servings, setServings] = useState<number>(1)
@@ -63,7 +63,7 @@ export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
   }, [addFoodEntry, calcium, foodName, handleClose, protein, servings, selectedDate])
 
   const existingFoodItems =
-    existingFoodItemsData?.existingFoodItems?.map((item) => ({ label: item, value: item })) || []
+    existingFoodNamesData?.existingFoodItems?.map((item) => ({ label: item.food, value: item.food })) || []
 
   return (
     <>
@@ -102,13 +102,13 @@ export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
                 placeholder="Calcium"
                 style={styles}
                 value={calcium}
-                onChange={(value) => setCalcium(Number(value))}
+                onChange={(value) => setCalcium(parseFloat(value))}
               />
               <Input
                 placeholder="Protein"
                 style={styles}
-                value={calcium}
-                onChange={(value) => setProtein(Number(value))}
+                value={protein}
+                onChange={(value) => setProtein(parseFloat(value))}
               />
             </>
           ) : null}
