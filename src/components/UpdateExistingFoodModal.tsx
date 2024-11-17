@@ -48,6 +48,12 @@ export const UpdateExistingFoodModal = ({ selectedDate }: UpdateExistingFoodModa
         },
       })
       handleClose()
+      toaster.push(
+        <Message showIcon type={'success'}>
+          Food updated!
+        </Message>,
+        defaultToasterOptions
+      )
     } catch (e) {
       console.error(e)
       toaster.push(

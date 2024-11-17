@@ -97,6 +97,12 @@ export const FoodTable = ({ selectedDate }: FoodTableProps) => {
             },
           },
         })
+        toaster.push(
+          <Message showIcon type={'success'}>
+            Food entry updated!
+          </Message>,
+          defaultToasterOptions
+        )
       } catch (e) {
         console.error(e)
         toaster.push(

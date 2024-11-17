@@ -62,6 +62,12 @@ export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
         },
       })
       handleClose()
+      toaster.push(
+        <Message showIcon type={'success'}>
+          Food added!
+        </Message>,
+        defaultToasterOptions
+      )
     } catch (e) {
       console.error(e)
       toaster.push(
