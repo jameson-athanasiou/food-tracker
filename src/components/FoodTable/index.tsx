@@ -1,10 +1,11 @@
 import { Table } from 'rsuite'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { EditableTextCell } from './EditableTextCell'
 import { ActionCell } from './ActionCell'
 import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../../queries/FoodEntriesByDate.generated'
-import { useAddOrUpdateFoodEntryMutation } from '../../mutations/AddOrUpdateFoodEntry.generated'
+import { useUpdateExistingFoodEntryMutation } from '../../mutations/UpdateExistingFoodEntry.generated'
 import { FoodEntry } from '../../../types/types.generated'
+import { useDeleteFoodEntryMutation } from '../../mutations/DeleteFoodEntry.generated'
 
 type FoodTableProps = {
   selectedDate: string
@@ -25,7 +26,12 @@ export const FoodTable = ({ selectedDate }: FoodTableProps) => {
   const { data: foodEntriesData, loading: foodEntriesLoading } = useFoodEntriesByDateQuery({
     variables: { input: { date: selectedDate } },
   })
-  const [addOrUpdateFoodEntry] = useAddOrUpdateFoodEntryMutation({
+  const [updateFoodEntry] = useUpdateExistingFoodEntryMutation({
+    awaitRefetchQueries: true,
+    refetchQueries: [{ query: FoodEntriesByDateDocument, variables: { input: { date: selectedDate } } }],
+  })
+
+  const [deleteFoodEntry] = useDeleteFoodEntryMutation({
     awaitRefetchQueries: true,
     refetchQueries: [{ query: FoodEntriesByDateDocument, variables: { input: { date: selectedDate } } }],
   })
@@ -67,15 +73,21 @@ export const FoodTable = ({ selectedDate }: FoodTableProps) => {
     addRowToEditState(id)
   }
 
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteFoodEntry({ variables: { input: { id } } })
+    },
+    [deleteFoodEntry]
+  )
+
   const handleSave = async (id: string) => {
     const entryToSave = allEntries.find((entry) => entry.id === id)
     if (entryToSave && entryToSave.food) {
       removeRowFromEditState(id)
-      await addOrUpdateFoodEntry({
+      await updateFoodEntry({
         variables: {
           input: {
             id: entryToSave.id,
-            date: selectedDate,
             food: entryToSave.food,
             servings: Number(entryToSave.servings),
           },
@@ -107,7 +119,7 @@ export const FoodTable = ({ selectedDate }: FoodTableProps) => {
         </Column>
         <Column width={100}>
           <HeaderCell>Action</HeaderCell>
-          <ActionCell dataKey="id" onEdit={handleEdit} onSave={handleSave} />
+          <ActionCell dataKey="id" onEdit={handleEdit} onSave={handleSave} onDelete={handleDelete} />
         </Column>
       </Table>
     </>

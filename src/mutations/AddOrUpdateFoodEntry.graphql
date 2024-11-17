@@ -1,9 +1,0 @@
-mutation AddOrUpdateFoodEntry($input: AddOrUpdateFoodEntryInput!) {
-  addOrUpdateFoodEntry(input: $input) {
-    entries {
-        id
-        food
-        servings
-    }
-  }
-}

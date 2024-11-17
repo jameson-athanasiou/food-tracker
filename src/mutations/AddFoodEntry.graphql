@@ -1,0 +1,9 @@
+mutation AddFoodEntry($input: AddFoodEntryInput!) {
+  addFoodEntry(input: $input) {
+    id
+    food
+    servings
+    calcium
+    protein
+  }
+}

@@ -73,6 +73,42 @@ export class FoodEntries {
       })
     }
   }
+
+  public addEntry(data: { id: string; date: string; food: string; servings: number }) {
+    const { id, date, food, servings } = data
+    this.entries.unshift({
+      id: id || uuidV4(),
+      date,
+      food,
+      servings,
+    })
+  }
+
+  public getEntry({ id }: { id: string }) {
+    const existingEntry = this.entries.find((entry) => entry.id === id)
+
+    return existingEntry
+  }
+
+  public updateEntry(data: { id: string; food?: Maybe<string>; servings?: Maybe<number> }) {
+    const { id, food, servings } = data
+
+    const existingEntriesContainsItem = this.entries.find((entry) => entry.id === id)
+    if (!existingEntriesContainsItem) throw new Error('No existing entry found')
+
+    this.entries = this.entries.map((entry) => {
+      if (entry.id === id) return { ...entry, ...(food && { food }), ...(servings && { servings }) }
+      return entry
+    })
+  }
+
+  public deleteEntry({ id }: { id: string }) {
+    const existingEntriesContainsItem = this.entries.find((entry) => entry.id === id)
+
+    if (!existingEntriesContainsItem) throw new Error('No existing entry found')
+
+    this.entries = this.entries.filter((existingEntry) => existingEntry.id !== id)
+  }
 }
 
 const FoodEntriesSingleton = new FoodEntries()

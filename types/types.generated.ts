@@ -16,7 +16,7 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type AddOrUpdateFoodEntryInput = {
+export type AddFoodEntryInput = {
   calcium?: InputMaybe<Scalars['Float']['input']>;
   date: Scalars['String']['input'];
   food: Scalars['String']['input'];
@@ -25,9 +25,14 @@ export type AddOrUpdateFoodEntryInput = {
   servings: Scalars['Float']['input'];
 };
 
-export type AddOrUpdateFoodEntryResponse = {
-  __typename?: 'AddOrUpdateFoodEntryResponse';
-  entries: Array<FoodEntry>;
+export type DeleteFoodEntryInput = {
+  id: Scalars['String']['input'];
+};
+
+export type DeleteFoodEntryResponse = {
+  __typename?: 'DeleteFoodEntryResponse';
+  deletedId: Scalars['ID']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type ExistingFood = {
@@ -52,13 +57,25 @@ export type FoodEntry = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addOrUpdateFoodEntry: AddOrUpdateFoodEntryResponse;
+  addFoodEntry: FoodEntry;
+  deleteFoodEntry: DeleteFoodEntryResponse;
+  updateExistingFoodEntry: FoodEntry;
   updateFoodNutrition: ExistingFood;
 };
 
 
-export type MutationAddOrUpdateFoodEntryArgs = {
-  input: AddOrUpdateFoodEntryInput;
+export type MutationAddFoodEntryArgs = {
+  input: AddFoodEntryInput;
+};
+
+
+export type MutationDeleteFoodEntryArgs = {
+  input: DeleteFoodEntryInput;
+};
+
+
+export type MutationUpdateExistingFoodEntryArgs = {
+  input: UpdateExistingFoodEntryInput;
 };
 
 
@@ -75,6 +92,12 @@ export type Query = {
 
 export type QueryFoodEntriesByDateArgs = {
   input: FoodEntriesByDateInput;
+};
+
+export type UpdateExistingFoodEntryInput = {
+  food?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  servings?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateFoodNutritionInput = {
@@ -154,9 +177,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AddOrUpdateFoodEntryInput: AddOrUpdateFoodEntryInput;
-  AddOrUpdateFoodEntryResponse: ResolverTypeWrapper<AddOrUpdateFoodEntryResponse>;
+  AddFoodEntryInput: AddFoodEntryInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  DeleteFoodEntryInput: DeleteFoodEntryInput;
+  DeleteFoodEntryResponse: ResolverTypeWrapper<DeleteFoodEntryResponse>;
   ExistingFood: ResolverTypeWrapper<ExistingFood>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   FoodEntriesByDateInput: FoodEntriesByDateInput;
@@ -165,14 +189,16 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  UpdateExistingFoodEntryInput: UpdateExistingFoodEntryInput;
   UpdateFoodNutritionInput: UpdateFoodNutritionInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  AddOrUpdateFoodEntryInput: AddOrUpdateFoodEntryInput;
-  AddOrUpdateFoodEntryResponse: AddOrUpdateFoodEntryResponse;
+  AddFoodEntryInput: AddFoodEntryInput;
   Boolean: Scalars['Boolean']['output'];
+  DeleteFoodEntryInput: DeleteFoodEntryInput;
+  DeleteFoodEntryResponse: DeleteFoodEntryResponse;
   ExistingFood: ExistingFood;
   Float: Scalars['Float']['output'];
   FoodEntriesByDateInput: FoodEntriesByDateInput;
@@ -181,11 +207,13 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
+  UpdateExistingFoodEntryInput: UpdateExistingFoodEntryInput;
   UpdateFoodNutritionInput: UpdateFoodNutritionInput;
 };
 
-export type AddOrUpdateFoodEntryResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['AddOrUpdateFoodEntryResponse'] = ResolversParentTypes['AddOrUpdateFoodEntryResponse']> = {
-  entries?: Resolver<Array<ResolversTypes['FoodEntry']>, ParentType, ContextType>;
+export type DeleteFoodEntryResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteFoodEntryResponse'] = ResolversParentTypes['DeleteFoodEntryResponse']> = {
+  deletedId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -206,7 +234,9 @@ export type FoodEntryResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addOrUpdateFoodEntry?: Resolver<ResolversTypes['AddOrUpdateFoodEntryResponse'], ParentType, ContextType, RequireFields<MutationAddOrUpdateFoodEntryArgs, 'input'>>;
+  addFoodEntry?: Resolver<ResolversTypes['FoodEntry'], ParentType, ContextType, RequireFields<MutationAddFoodEntryArgs, 'input'>>;
+  deleteFoodEntry?: Resolver<ResolversTypes['DeleteFoodEntryResponse'], ParentType, ContextType, RequireFields<MutationDeleteFoodEntryArgs, 'input'>>;
+  updateExistingFoodEntry?: Resolver<ResolversTypes['FoodEntry'], ParentType, ContextType, RequireFields<MutationUpdateExistingFoodEntryArgs, 'input'>>;
   updateFoodNutrition?: Resolver<ResolversTypes['ExistingFood'], ParentType, ContextType, RequireFields<MutationUpdateFoodNutritionArgs, 'input'>>;
 };
 
@@ -216,7 +246,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type Resolvers<ContextType = any> = {
-  AddOrUpdateFoodEntryResponse?: AddOrUpdateFoodEntryResponseResolvers<ContextType>;
+  DeleteFoodEntryResponse?: DeleteFoodEntryResponseResolvers<ContextType>;
   ExistingFood?: ExistingFoodResolvers<ContextType>;
   FoodEntry?: FoodEntryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

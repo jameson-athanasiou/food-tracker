@@ -1,0 +1,6 @@
+mutation DeleteFoodEntry($input: DeleteFoodEntryInput!) {
+  deleteFoodEntry(input: $input) {
+    deletedId
+    success
+  }
+}

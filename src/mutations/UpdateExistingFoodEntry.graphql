@@ -1,0 +1,9 @@
+mutation UpdateExistingFoodEntry($input: UpdateExistingFoodEntryInput!) {
+  updateExistingFoodEntry(input: $input) {
+    id
+    food
+    servings
+    calcium
+    protein
+  }
+}

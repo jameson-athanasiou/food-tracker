@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react'
-import { Button, ButtonToolbar, Input, InputPicker, Modal, AutoComplete } from 'rsuite'
+import { Button, ButtonToolbar, Input, Modal, AutoComplete } from 'rsuite'
 import { v4 as uuidV4 } from 'uuid'
-import { useAddOrUpdateFoodEntryMutation } from '../mutations/AddOrUpdateFoodEntry.generated'
-import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../queries/FoodEntriesByDate.generated'
+import { useAddFoodEntryMutation } from '../mutations/AddFoodEntry.generated'
+import { FoodEntriesByDateDocument } from '../queries/FoodEntriesByDate.generated'
 import { useExistingFoodNamesQuery, ExistingFoodNamesDocument } from '../queries/ExistingFoodNames.generated'
-import { FoodEntry } from '../types.generated'
 
 type AddNewFoodModalProps = {
   selectedDate: string
@@ -17,14 +16,14 @@ const styles = {
 export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
   const [open, setOpen] = useState(false)
   const [showNutritionFacts, setShowNutritionFacts] = useState(false)
-  const [addFoodEntry, { loading }] = useAddOrUpdateFoodEntryMutation({
+  const [addFoodEntry, { loading }] = useAddFoodEntryMutation({
     awaitRefetchQueries: true,
     refetchQueries: [
       { query: FoodEntriesByDateDocument, variables: { input: { date: selectedDate } } },
       { query: ExistingFoodNamesDocument },
     ],
   })
-  const { data: existingFoodNamesData, loading: existingFoodItemsLoading } = useExistingFoodNamesQuery()
+  const { data: existingFoodNamesData } = useExistingFoodNamesQuery()
 
   const [foodName, setFoodName] = useState<string>()
   const [servings, setServings] = useState<number>(1)

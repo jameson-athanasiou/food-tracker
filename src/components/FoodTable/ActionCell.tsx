@@ -1,7 +1,7 @@
-import { CellProps, Table, Button, IconButton, Input, DatePicker, InputNumber } from 'rsuite'
+import { CellProps, Table, IconButton } from 'rsuite'
 import { VscEdit, VscSave, VscRemove } from 'react-icons/vsc'
 
-const { Column, HeaderCell, Cell } = Table
+const { Cell } = Table
 
 interface RowData {
   [index: string]: string | number
@@ -16,8 +16,13 @@ export const ActionCell = ({
   dataKey,
   onEdit,
   onSave,
+  onDelete,
   ...props
-}: CellProps<RowData> & { onEdit: (id: string) => void; onSave: (id: string) => void }) => {
+}: CellProps<RowData> & {
+  onEdit: (id: string) => void
+  onSave: (id: string) => void
+  onDelete: (id: string) => void
+}) => {
   return (
     <Cell {...props} style={{ padding: '6px', display: 'flex', gap: '4px' }}>
       <IconButton
@@ -32,7 +37,7 @@ export const ActionCell = ({
         appearance="subtle"
         icon={<VscRemove />}
         onClick={() => {
-          // onRemove(rowData?.id)
+          onDelete(rowData?.id as string)
         }}
       />
     </Cell>
