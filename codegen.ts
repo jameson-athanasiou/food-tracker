@@ -5,12 +5,15 @@ const config: CodegenConfig = {
   documents: ['src/**/*.graphql'],
   ignoreNoDocuments: true, // for better experience with the watcher
   generates: {
-    'src/types.generated.ts': {
-      plugins: ['typescript'],
+    'types/types.generated.ts': {
+      plugins: ['typescript', 'typescript-resolvers'],
+      config: {
+        maybeValue: 'T | null | undefined',
+      },
     },
     'src/': {
       preset: 'near-operation-file',
-      presetConfig: { extension: '.generated.ts', baseTypesPath: 'types.generated.ts' },
+      presetConfig: { extension: '.generated.ts', baseTypesPath: '../types/types.generated.ts' },
       plugins: ['typescript-operations', 'typescript-react-apollo'],
       config: { withHooks: true },
     },

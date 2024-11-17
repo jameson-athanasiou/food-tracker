@@ -4,7 +4,7 @@ import { EditableTextCell } from './EditableTextCell'
 import { ActionCell } from './ActionCell'
 import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../../queries/FoodEntriesByDate.generated'
 import { useAddOrUpdateFoodEntryMutation } from '../../mutations/AddOrUpdateFoodEntry.generated'
-import { FoodEntry } from '../../types.generated'
+import { FoodEntry } from '../../../types/types.generated'
 
 type FoodTableProps = {
   selectedDate: string

@@ -1,4 +1,5 @@
 import { v4 as uuidV4 } from 'uuid'
+import { Maybe } from '../types/types.generated'
 
 export class FoodEntries {
   entries = [
@@ -39,7 +40,7 @@ export class FoodEntries {
     return this.nutrition
   }
 
-  public setNutrition(data: { food: string; calcium: number; protein: number }) {
+  public setNutrition(data: { food: string; calcium?: Maybe<number>; protein?: Maybe<number> }) {
     this.nutrition = {
       ...this.nutrition,
       [data.food]: {
@@ -73,3 +74,7 @@ export class FoodEntries {
     }
   }
 }
+
+const FoodEntriesSingleton = new FoodEntries()
+
+export default FoodEntriesSingleton
