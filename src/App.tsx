@@ -16,9 +16,17 @@ const App = () => {
 
   const formattedSelectedDate = selectedDate.toLocaleDateString('en-US')
 
+  const styles = `
+    button {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+  `
+
   return (
     <>
       <ApolloProvider client={client}>
+        <style>{styles}</style>
         <DateSelection selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
         <AddNewFoodModal selectedDate={formattedSelectedDate} />
         <UpdateExistingFoodModal selectedDate={formattedSelectedDate} />

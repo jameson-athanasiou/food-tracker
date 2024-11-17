@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react'
-import { Button, ButtonToolbar, Input, Modal, AutoComplete } from 'rsuite'
+import { Button, ButtonToolbar, Input, Modal, AutoComplete, useToaster, Message } from 'rsuite'
 import { v4 as uuidV4 } from 'uuid'
 import { useAddFoodEntryMutation } from '../mutations/AddFoodEntry.generated'
 import { FoodEntriesByDateDocument } from '../queries/FoodEntriesByDate.generated'
 import { useExistingFoodNamesQuery, ExistingFoodNamesDocument } from '../queries/ExistingFoodNames.generated'
+import { defaultToasterOptions } from './Toast'
 
 type AddNewFoodModalProps = {
   selectedDate: string
@@ -15,6 +16,7 @@ const styles = {
 
 export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
   const [open, setOpen] = useState(false)
+  const toaster = useToaster()
   const [showNutritionFacts, setShowNutritionFacts] = useState(false)
   const [addFoodEntry, { loading }] = useAddFoodEntryMutation({
     awaitRefetchQueries: true,
@@ -46,20 +48,30 @@ export const AddNewFoodModal = ({ selectedDate }: AddNewFoodModalProps) => {
   }, [])
 
   const handleSave = useCallback(async () => {
-    await addFoodEntry({
-      variables: {
-        input: {
-          id: uuidV4(),
-          date: selectedDate,
-          food: foodName as string,
-          servings,
-          ...(calcium && { calcium }),
-          ...(protein && { protein }),
+    try {
+      await addFoodEntry({
+        variables: {
+          input: {
+            id: uuidV4(),
+            date: selectedDate,
+            food: foodName as string,
+            servings,
+            ...(calcium && { calcium }),
+            ...(protein && { protein }),
+          },
         },
-      },
-    })
-    handleClose()
-  }, [addFoodEntry, calcium, foodName, handleClose, protein, servings, selectedDate])
+      })
+      handleClose()
+    } catch (e) {
+      console.error(e)
+      toaster.push(
+        <Message showIcon type={'error'}>
+          Failed to save food
+        </Message>,
+        defaultToasterOptions
+      )
+    }
+  }, [addFoodEntry, selectedDate, foodName, servings, calcium, protein, handleClose, toaster])
 
   const existingFoodItems =
     existingFoodNamesData?.existingFoodItems?.map((item) => ({ label: item.food, value: item.food })) || []

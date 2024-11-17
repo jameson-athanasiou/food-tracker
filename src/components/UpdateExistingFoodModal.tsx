@@ -1,11 +1,12 @@
 import { useCallback, useState } from 'react'
-import { Button, ButtonToolbar, Input, InputPicker, Modal } from 'rsuite'
+import { Button, ButtonToolbar, Input, InputPicker, Modal, useToaster, Message } from 'rsuite'
 import { useUpdateFoodNutritionMutation } from '../mutations/UpdateFoodNutrition.generated'
 import { FoodEntriesByDateDocument } from '../queries/FoodEntriesByDate.generated'
 import {
   useExistingFoodItemsWithNutritionQuery,
   ExistingFoodItemsWithNutritionDocument,
 } from '../queries/ExistingFoodItemsWithNutrition.generated'
+import { defaultToasterOptions } from './Toast'
 
 type UpdateExistingFoodModalProps = {
   selectedDate: string
@@ -17,6 +18,7 @@ const styles = {
 
 export const UpdateExistingFoodModal = ({ selectedDate }: UpdateExistingFoodModalProps) => {
   const [open, setOpen] = useState(false)
+  const toaster = useToaster()
   const [updateFood, { loading }] = useUpdateFoodNutritionMutation({
     awaitRefetchQueries: true,
     refetchQueries: [
@@ -35,17 +37,27 @@ export const UpdateExistingFoodModal = ({ selectedDate }: UpdateExistingFoodModa
   const handleClose = useCallback(() => setOpen(false), [])
 
   const handleSave = useCallback(async () => {
-    await updateFood({
-      variables: {
-        input: {
-          food: foodName as string,
-          ...(calcium && { calcium: parseFloat(calcium) }),
-          ...(protein && { protein: parseFloat(protein) }),
+    try {
+      await updateFood({
+        variables: {
+          input: {
+            food: foodName as string,
+            ...(calcium && { calcium: parseFloat(calcium) }),
+            ...(protein && { protein: parseFloat(protein) }),
+          },
         },
-      },
-    })
-    handleClose()
-  }, [calcium, foodName, handleClose, protein, updateFood])
+      })
+      handleClose()
+    } catch (e) {
+      console.error(e)
+      toaster.push(
+        <Message showIcon type={'error'}>
+          Failed to update food
+        </Message>,
+        defaultToasterOptions
+      )
+    }
+  }, [calcium, foodName, handleClose, protein, toaster, updateFood])
 
   const existingFoodItems =
     ExistingFoodItemsWithNutritionData?.existingFoodItems?.map((item) => ({ label: item.food, value: item.food })) || []

@@ -1,4 +1,4 @@
-import { Table } from 'rsuite'
+import { Message, Table, useToaster } from 'rsuite'
 import { useCallback, useEffect, useState } from 'react'
 import { EditableTextCell } from './EditableTextCell'
 import { ActionCell } from './ActionCell'
@@ -6,6 +6,7 @@ import { useFoodEntriesByDateQuery, FoodEntriesByDateDocument } from '../../quer
 import { useUpdateExistingFoodEntryMutation } from '../../mutations/UpdateExistingFoodEntry.generated'
 import { FoodEntry } from '../../../types/types.generated'
 import { useDeleteFoodEntryMutation } from '../../mutations/DeleteFoodEntry.generated'
+import { defaultToasterOptions } from '../Toast'
 
 type FoodTableProps = {
   selectedDate: string
@@ -13,7 +14,7 @@ type FoodTableProps = {
 
 const { Column, HeaderCell, Cell } = Table
 
-const styles = `
+const tableStyles = `
 .table-cell-editing .rs-table-cell-content {
   padding: 4px;
 }
@@ -23,6 +24,8 @@ const styles = `
 `
 
 export const FoodTable = ({ selectedDate }: FoodTableProps) => {
+  const toaster = useToaster()
+
   const { data: foodEntriesData, loading: foodEntriesLoading } = useFoodEntriesByDateQuery({
     variables: { input: { date: selectedDate } },
   })
@@ -84,21 +87,31 @@ export const FoodTable = ({ selectedDate }: FoodTableProps) => {
     const entryToSave = allEntries.find((entry) => entry.id === id)
     if (entryToSave && entryToSave.food) {
       removeRowFromEditState(id)
-      await updateFoodEntry({
-        variables: {
-          input: {
-            id: entryToSave.id,
-            food: entryToSave.food,
-            servings: Number(entryToSave.servings),
+      try {
+        await updateFoodEntry({
+          variables: {
+            input: {
+              id: entryToSave.id,
+              food: entryToSave.food,
+              servings: Number(entryToSave.servings),
+            },
           },
-        },
-      })
+        })
+      } catch (e) {
+        console.error(e)
+        toaster.push(
+          <Message showIcon type={'error'}>
+            Failed to update food entry
+          </Message>,
+          defaultToasterOptions
+        )
+      }
     }
   }
 
   return (
     <>
-      <style>{styles}</style>
+      <style>{tableStyles}</style>
       <hr />
       <Table height={420} data={allEntries} loading={foodEntriesLoading}>
         <Column flexGrow={1}>
