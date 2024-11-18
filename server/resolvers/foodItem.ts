@@ -1,17 +1,17 @@
 import { Resolvers } from '../../types/types.generated'
-import FoodEntriesSingleton from '../FoodEntries'
+import LocalDatabase from '../database/local'
 
 const resolvers: Resolvers = {
   Mutation: {
     updateFoodNutrition: (_, { input }) => {
-      FoodEntriesSingleton.setNutrition(input)
+      LocalDatabase.setNutrition(input)
 
       return input
     },
   },
   Query: {
     existingFoodItems: () => {
-      return FoodEntriesSingleton.getExistingFoodItems()
+      return LocalDatabase.getExistingFoodItems()
     },
   },
 }

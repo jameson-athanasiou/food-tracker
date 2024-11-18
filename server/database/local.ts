@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from 'uuid'
-import { Maybe } from '../types/types.generated'
+import { Maybe } from '../../types/types.generated'
 
-export class FoodEntries {
+export class LocalDatabase {
   entries = [
     {
       id: '78e3c73c-fabb-47fd-ace4-5f374dc9bdaf',
@@ -74,14 +74,25 @@ export class FoodEntries {
     }
   }
 
-  public addEntry(data: { id: string; date: string; food: string; servings: number }) {
-    const { id, date, food, servings } = data
+  public addEntry(data: {
+    id: string
+    date: string
+    food: string
+    servings: number
+    calcium?: Maybe<number>
+    protein?: Maybe<number>
+  }) {
+    const { id, date, food, servings, calcium, protein } = data
     this.entries.unshift({
       id: id || uuidV4(),
       date,
       food,
       servings,
     })
+
+    if (calcium || protein) {
+      this.setNutrition({ food, calcium, protein })
+    }
   }
 
   public getEntry({ id }: { id: string }) {
@@ -111,6 +122,6 @@ export class FoodEntries {
   }
 }
 
-const FoodEntriesSingleton = new FoodEntries()
+const FoodEntriesSingleton = new LocalDatabase()
 
 export default FoodEntriesSingleton

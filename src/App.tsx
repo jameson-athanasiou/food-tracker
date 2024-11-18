@@ -20,21 +20,18 @@ const App = () => {
   const formattedSelectedDate = selectedDate.toLocaleDateString('en-US')
 
   const styles = `
-    button {
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-    }
-
     .rs-picker-date {
       margin-top: 1rem;
     }
 
     .rs-stack-item {
       margin-left: 1rem;
+      padding-top: 0.5rem;
     }
 
     .rs-toggle {
       margin-top: 12px;
+      margin-right: 1rem;
     }
   `
 
@@ -42,6 +39,7 @@ const App = () => {
     <div>
       <ApolloProvider client={client}>
         <CustomProvider theme={isDarkMode ? 'dark' : 'light'}>
+          <style>{styles}</style>
           <Container>
             <Header>
               <Navbar appearance="inverse">
@@ -52,7 +50,6 @@ const App = () => {
               </Navbar>
             </Header>
             <Content>
-              <style>{styles}</style>
               <Stack>
                 <DateSelection selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
                 <AddNewFoodModal selectedDate={formattedSelectedDate} />
