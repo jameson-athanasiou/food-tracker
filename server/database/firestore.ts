@@ -41,7 +41,7 @@ export const getFoodEntriesByDate = async (date: string): Promise<Pick<FoodEntry
 export const addFoodEntry = async (food: AddFoodEntryInput) => {
   const collection = firestore.collection(FOOD_ENTRIES_COLLECTION_NAME)
 
-  const result = await collection.add(food)
+  await collection.add(food)
 
   return food
 }
@@ -71,25 +71,7 @@ export const updateFoodDetails = async (food: UpdateFoodNutritionInput) => {
 }
 
 export const addFoodDetails = async (food: string) => {
-  const collection = await firestore.collection(FOOD_DETAILS_COLLECTION_NAME).add({ food })
+  await firestore.collection(FOOD_DETAILS_COLLECTION_NAME).add({ food })
 
   return food
 }
-
-// export const insert = async (game: AddGame) => {
-//   const collection = firestore.collection('nfl-games')
-
-//   const result = await collection.add(game)
-
-//   return { id: result.id, ...game }
-// }
-
-// export const update = async (game: UpdateGame) => {
-//   const doc = firestore.collection('nfl-games').doc(game.id)
-
-//   await doc.update(game)
-
-//   const updatedGame = await (await doc.get()).data()
-
-//   return updatedGame as Game
-// }

@@ -21,7 +21,18 @@ const app = express()
 const startServer = async () => {
   await server.start()
 
-  app.use('/graphql', cors<cors.CorsRequest>(), express.json(), expressMiddleware(server))
+  app.use(
+    '/graphql',
+    cors<cors.CorsRequest>(),
+    express.json(),
+    // @ts-expect-error idk
+    expressMiddleware(server, {
+      context: async ({ req, res }) => ({
+        req,
+        res,
+      }),
+    })
+  )
 
   app.use('/', express.static('dist'))
 

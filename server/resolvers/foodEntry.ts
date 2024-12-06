@@ -1,5 +1,4 @@
 import { FoodEntry, Resolvers } from '../../types/types.generated'
-import LocalDatabase from '../database/local'
 import {
   addFoodEntry,
   updateFoodDetails,
@@ -54,8 +53,6 @@ const resolvers: Resolvers = {
   },
   Query: {
     foodEntriesByDate: async (_, { input }) => {
-      console.log(input)
-
       const entries = await getFoodEntriesByDate(input.date)
       return entries
     },
