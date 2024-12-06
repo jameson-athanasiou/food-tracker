@@ -7,7 +7,9 @@ import cors from 'cors'
 import typeDefs from './schema'
 import resolvers from './resolvers'
 
-if (process.env.NODE_ENV !== 'production') {
+const isProduction = process.env.NODE_ENV !== 'production'
+
+if (!isProduction) {
   dotenv.config()
 }
 
@@ -36,7 +38,7 @@ const startServer = async () => {
 
   app.use('/', express.static('dist'))
 
-  app.listen({ port: 4000 }, () => console.log('🚀 Server ready at http://localhost:4000'))
+  app.listen({ port: isProduction ? '8080' : '4000' }, () => console.log('🚀 Server ready at http://localhost:4000'))
 }
 
 startServer()
