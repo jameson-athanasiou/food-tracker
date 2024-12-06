@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { DatePicker } from 'rsuite'
 
 type DateSelectionProps = {

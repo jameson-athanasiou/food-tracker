@@ -1,5 +1,4 @@
 import { Table, Input, CellProps } from 'rsuite'
-import { RowDataType } from 'rsuite/esm/Table'
 
 const { Cell } = Table
 

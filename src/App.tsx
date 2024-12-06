@@ -1,6 +1,6 @@
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { useState } from 'react'
-import { Container, Header, Content, Footer, Sidebar, Navbar, Stack, Toggle, CustomProvider, Nav } from 'rsuite'
+import { Container, Header, Content, Navbar, Stack, CustomProvider, Nav } from 'rsuite'
 import { FoodTable } from './components/FoodTable'
 import { DateSelection } from './components/DateSelection'
 import { AddNewFoodModal } from './components/AddNewFoodModal'

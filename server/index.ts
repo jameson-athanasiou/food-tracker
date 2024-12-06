@@ -1,7 +1,9 @@
 import { ApolloServer } from '@apollo/server'
 import { mergeTypeDefs } from '@graphql-tools/merge'
-import { startStandaloneServer } from '@apollo/server/standalone'
 import dotenv from 'dotenv'
+import express from 'express'
+import { expressMiddleware } from '@apollo/server/express4'
+import cors from 'cors'
 import typeDefs from './schema'
 import resolvers from './resolvers'
 
@@ -14,8 +16,16 @@ const server = new ApolloServer({
   resolvers,
 })
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
-})
+const app = express()
 
-console.log(`🚀  Server ready at: ${url}`)
+const startServer = async () => {
+  await server.start()
+
+  app.use('/graphql', cors<cors.CorsRequest>(), express.json(), expressMiddleware(server))
+
+  app.use('/', express.static('dist'))
+
+  app.listen({ port: 4000 }, () => console.log('🚀 Server ready at http://localhost:4000'))
+}
+
+startServer()

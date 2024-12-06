@@ -26,8 +26,7 @@ export const UpdateExistingFoodModal = ({ selectedDate }: UpdateExistingFoodModa
       { query: ExistingFoodItemsWithNutritionDocument },
     ],
   })
-  const { data: ExistingFoodItemsWithNutritionData, loading: existingFoodItemsLoading } =
-    useExistingFoodItemsWithNutritionQuery()
+  const { data: ExistingFoodItemsWithNutritionData } = useExistingFoodItemsWithNutritionQuery()
 
   const [foodName, setFoodName] = useState<string>()
   const [calcium, setCalcium] = useState<string>()
@@ -55,7 +54,6 @@ export const UpdateExistingFoodModal = ({ selectedDate }: UpdateExistingFoodModa
         defaultToasterOptions
       )
     } catch (e) {
-      console.error(e)
       toaster.push(
         <Message showIcon type={'error'}>
           Failed to update food
@@ -93,7 +91,6 @@ export const UpdateExistingFoodModal = ({ selectedDate }: UpdateExistingFoodModa
             style={styles}
             value={calcium || ''}
             onChange={(value) => {
-              console.log(value)
               setCalcium(value)
             }}
           />
