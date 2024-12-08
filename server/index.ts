@@ -7,7 +7,7 @@ import cors from 'cors'
 import typeDefs from './schema'
 import resolvers from './resolvers'
 
-const isProduction = process.env.NODE_ENV !== 'production'
+const isProduction = process.env.NODE_ENV === 'production'
 const PORT = process.env.PORT || '4000'
 
 if (!isProduction) {
@@ -19,12 +19,12 @@ const server = new ApolloServer({
   resolvers,
 })
 
-const app = express()
+const expressServer = express()
 
-const startServer = async () => {
+const app = async () => {
   await server.start()
 
-  app.use(
+  expressServer.use(
     '/graphql',
     cors<cors.CorsRequest>(),
     express.json(),
@@ -37,9 +37,11 @@ const startServer = async () => {
     })
   )
 
-  app.use('/', express.static('dist'))
+  expressServer.use('/', express.static('dist'))
 
-  app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:${PORT}`))
+  expressServer.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:${PORT}`))
 }
 
-startServer()
+if (!isProduction) {
+  app()
+}
